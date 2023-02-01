@@ -1,0 +1,76 @@
+/* Global Styles*/
+
+:root {
+    --button-color: rgb(171, 194, 112);
+    --keyboard-color: rgb(254, 200, 104);
+    --display-container-color: rgb(71, 60, 51);
+    --display-color: rgb(254, 200, 104);
+}
+
+*, :before, :after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Helvetica;
+    list-style-type: none;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #calc-container {
+    width: 20vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--display-container-color);
+  }
+
+  #display-container {
+    margin: 1em;
+  }
+
+  #display {
+    width: 100%;
+    background-color: var(--display-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: right;
+  }
+
+  #current-number {
+    margin: 1em;
+    font-weight: 700;
+  }
+
+  #keyboard {
+    height: 90em;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr); 
+    padding: 1em;
+   
+    background-color: var(--keyboard-color);
+  }
+
+  .key {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--button-color);
+    border: 1px solid black;
+    border-radius: 5%;
+    font-weight: 700;
+  }
+
+  .span-2 {
+    grid-column: span 2;
+    
+  }
