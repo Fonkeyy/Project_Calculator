@@ -2,9 +2,9 @@
 
 :root {
     --button-color: rgb(171, 194, 112);
-    --keyboard-color: rgb(254, 200, 104);
-    --display-container-color: rgb(71, 60, 51);
-    --display-color: rgb(254, 200, 104);
+    --keyboard-color: rgb(241, 188, 98);
+    --display-container-color: rgb(241, 188, 98);
+    --display-color: rgb(255, 220, 104)
 }
 
 *, :before, :after {
@@ -19,6 +19,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
+    height: 100vh;
   }
 
   #calc-container {
@@ -30,21 +32,30 @@
   }
 
   #display-container {
-    margin: 1em;
+    margin: 0.6em;
   }
 
   #display {
     width: 100%;
+    height: 4em;
     background-color: var(--display-color);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: right;
+    justify-content: space-between;
   }
 
   #current-number {
-    margin: 1em;
+    padding: 0em 1em 0.3em;
+    text-align: right;
+    font-size: 1.1em;
     font-weight: 700;
+  }
+
+  #previous-number {
+    padding: 0.3em 1em 0em;
+    text-align: right;
+    font-size: 0.8em;
+    font-weight: 600;
   }
 
   #keyboard {
