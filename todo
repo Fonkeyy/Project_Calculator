@@ -1,2 +1,4 @@
 fix 5 + operator + equal = Nan
 style
+add negate touch
+add %
