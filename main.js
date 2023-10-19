@@ -145,19 +145,19 @@ const operate = (operator, a, b) => {
 };
 
 const add = (a, b) => {
-    return a + b;
+    return (a + b).toFixed(3);
 };
 
 const subtract = (a, b) => {
-    return a - b;
+    return (a - b).toFixed(3);
 };
 
 const multiply = (a, b) => {
-    return a * b;
+    return (a * b).toFixed(3);
 };
 
 const divide = (a, b) => {
-    return a / b;
+    return (a / b).toFixed(3);
 };
 
 updateDisplay();
