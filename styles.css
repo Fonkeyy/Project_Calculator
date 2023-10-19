@@ -36,13 +36,14 @@ body {
 }
 
 #display-container {
-    height: 14vh;
+    height: 6rem;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: flex-end;
-    gap: 2rem;
-    padding: 0rem 1rem;
+    gap: 1rem;
+    padding: 3rem 1rem 0rem;
 }
 
 #previous-number {
@@ -67,22 +68,35 @@ body {
 .key {
     width: 3rem;
     height: 3rem;
+    font-size: 1rem;
     display: flex;
     place-items: center;
     place-content: center;
     color: var(--button-color);
     background-color: var(--button-background-color);
-    font-size: 1rem;
     border: none;
     border-radius: 15px;
 }
 
+.key:hover {
+    box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+        rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
+        rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+        rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
 .clear {
     background-color: var(--clear-color);
 }
 
 .operator,
 .equal,
-.sign {
+.sign,
+.percentage {
     background-color: var(--operator-color);
+}
+
+@media screen and (min-height: 600px) {
+    #display-container {
+        height: 8rem;
+    }
 }

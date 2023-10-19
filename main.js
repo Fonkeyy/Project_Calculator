@@ -1,127 +1,121 @@
-let a = '';
-let operator = '';
-let result = '';
-
 let previousNumber = document.querySelector('#previous-number');
 let currentNumber = document.querySelector('#current-number');
 
-currentNumber.textContent = '0';
+let current = '';
+let operator = '';
+let result = null;
 
-const handleClickSignButton = () => {
-    if (a.includes('-')) {
-        a = a.slice(1);
-    } else {
-        a = '-'.concat(a);
-    }
-    currentNumber.textContent = a;
+const updateDisplay = () => {
+    currentNumber.textContent = current || '0';
+    previousNumber.textContent = result !== null ? `${result} ${operator}` : '';
 };
 
-const signButton = document.querySelector('.sign');
-signButton.addEventListener('click', handleClickSignButton);
-
-const handleClickNumberButton = (e) => {
-    // console.log(a);
-    if (typeof e.target === 'object') {
-        a += e.target.textContent;
-    } else if (typeof e === 'string') {
-        a += e;
-    }
-    currentNumber.textContent = a;
+const handleSignButtonClick = () => {
+    current = current.startsWith('-') ? current.slice(1) : `-${current}`;
+    updateDisplay();
 };
 
-const numberButtons = document.querySelectorAll('.number');
-numberButtons.forEach((button) => {
-    button.addEventListener('click', handleClickNumberButton);
-});
+const handleNumberButtonClick = (e) => {
+    current += e;
+    updateDisplay();
+};
 
-const handlePercentage = () => {
+const handlePercentageButtonClick = () => {
     if (result != 0) {
-        const percentage = (parseInt(a) * result) / 100;
+        const percentage = (parseFloat(current) * result) / 100;
         result = operate(operator, result, percentage);
-        previousNumber.textContent = result;
-        currentNumber.textContent = result;
-        a = '';
+
+        current = '';
         operator = '';
+        previousNumber.textContent = result;
     } else {
         handleClickClearButton();
     }
 };
 
-const findOperator = (e) => {
-    if (typeof e.target === 'object') {
-        return e.target.textContent;
-    } else if (typeof e === 'string') {
-        return e;
+const handleOperatorButtonClick = (value) => {
+    value === '*' && (value = 'x');
+    if (result !== null && operator) {
+        result = operate(operator, result, parseFloat(current));
+    } else if (result === null) {
+        result = parseFloat(current);
+    }
+    current = '';
+    operator = value;
+    updateDisplay();
+};
+
+const handleEqualButtonClick = () => {
+    if (result !== null) {
+        previousNumber.textContent = `${result} ${operator} ${current}`;
+        result = operate(operator, result, parseFloat(current));
+        result && (currentNumber.textContent = result);
+        current = '';
+        operator = '';
     }
 };
 
-const handleClickOperatorButton = (e) => {
-    if (e.target.dataset.key === '192') {
-        handlePercentage();
-    } else {
-        if (result && operator) {
-            result = operate(operator, result, parseInt(a));
-            operator = '';
-        } else if (result && !operator) {
-            operator = findOperator(e);
-        } else {
-            result = parseInt(a);
-        }
-        if (!operator) {
-            operator = findOperator(e);
-        }
-
-        previousNumber.textContent = `${result} ${operator}`;
-        currentNumber.textContent = result;
-        a = '';
-    }
+const handleDotButtonClick = () => {
+    current = `${current}.`;
+    updateDisplay();
 };
 
-const operatorButtons = document.querySelectorAll('.operator');
-operatorButtons.forEach((button) => {
-    button.addEventListener('click', handleClickOperatorButton);
-});
-
-const handleClickEqualButton = () => {
-    result = operate(operator, result, parseInt(a));
-
-    previousNumber.textContent = null;
-    currentNumber.textContent = result;
-    a = 0;
+const handleDeleteButtonClick = () => {
+    current = current.slice(0, -1);
+    updateDisplay();
 };
 
-const equalButton = document.querySelector('.equal');
-equalButton.addEventListener('click', handleClickEqualButton);
-
-const handleClickClearButton = () => {
-    a = '';
-    result = '';
+const handleClearButtonClick = () => {
+    current = '';
     operator = '';
+    result = null;
 
-    previousNumber.textContent = null;
-    currentNumber.textContent = 0;
+    updateDisplay();
 };
 
-const clearButton = document.querySelector('.clear');
-clearButton.addEventListener('click', handleClickClearButton);
-
-const handleKeyDown = (e) => {
-    if (e.code.includes('Numpad') || e.code.includes('Digit')) {
-        if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
-            handleClickOperatorButton(e.key);
-        } else if (e.key === 'Enter' || e.key === ' ') {
-            handleClickEqualButton();
-        } else {
-            handleClickNumberButton(e.key);
-        }
-    } else if (e.key === 'Backspace' || e.key === 'Escape' || e.key === 'Delete') {
-        handleClickClearButton();
+const handleKeyboardInput = (e) => {
+    console.log(e.key);
+    if (e.key >= '0' && e.key <= '9') {
+        handleNumberButtonClick(e.key);
+    } else if (['+', '-', '*', '/'].includes(e.key)) {
+        handleOperatorButtonClick(e.key);
+    } else if ('%'.includes(e.key)) {
+        handlePercentageButtonClick(e.key);
+    } else if (e.key === 'Enter') {
+        handleEqualButtonClick();
+    } else if (e.key === 'Delete') {
+        handleClearButtonClick();
+    } else if (e.key === 'Backspace') {
+        handleDeleteButtonClick();
     }
 };
 
-window.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keydown', handleKeyboardInput);
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('sign')) {
+        handleSignButtonClick();
+    } else if (e.target.classList.contains('number')) {
+        handleNumberButtonClick(e.target.textContent);
+    } else if (e.target.classList.contains('operator')) {
+        handleOperatorButtonClick(e.target.textContent);
+    } else if (e.target.classList.contains('percentage')) {
+        handlePercentageButtonClick();
+    } else if (e.target.classList.contains('equal')) {
+        handleEqualButtonClick();
+    } else if (e.target.classList.contains('clear')) {
+        handleClearButtonClick();
+    } else if (e.target.classList.contains('delete')) {
+        handleDeleteButtonClick();
+    } else if (e.target.classList.contains('dot')) {
+        handleDotButtonClick();
+    }
+});
 
 const operate = (operator, a, b) => {
+    if (!operator || !a || !b) {
+        currentNumber.textContent = 'error';
+    }
     switch (operator) {
         case '+':
             return add(a, b);
@@ -152,167 +146,3 @@ const multiply = (a, b) => {
 const divide = (a, b) => {
     return a / b;
 };
-
-const percentage = (a, b) => {
-    return (b / 100) * a;
-};
-// let a = '';
-// let operator = '';
-// let result = '';
-
-// let previousNumber = document.querySelector('#previous-number');
-// let currentNumber = document.querySelector('#current-number');
-
-// currentNumber.textContent = '0';
-
-// const handleClickSignButton = () => {
-//     if (a.includes('-')) {
-//         a = a.slice(1);
-//     } else {
-//         a = '-'.concat(a);
-//     }
-//     currentNumber.textContent = a;
-// };
-
-// const signButton = document.querySelector('.sign');
-// signButton.addEventListener('click', handleClickSignButton);
-
-// const handleClickNumberButton = (e) => {
-//     // console.log(a);
-//     if (typeof e.target === 'object') {
-//         a += e.target.textContent;
-//     } else if (typeof e === 'string') {
-//         a += e;
-//     }
-//     currentNumber.textContent = a;
-// };
-
-// const numberButtons = document.querySelectorAll('.number');
-// numberButtons.forEach((button) => {
-//     button.addEventListener('click', handleClickNumberButton);
-// });
-
-// const handlePercentage = () => {
-//     if (result != 0) {
-//         const percentage = (parseInt(a) * result) / 100;
-//         result = operate(operator, result, percentage);
-//         previousNumber.textContent = result;
-//         currentNumber.textContent = result;
-//         a = '';
-//         console.log(result);
-//     } else {
-//         handleClickClearButton();
-//     }
-// };
-
-// const findOperator = (e) => {
-//     console.log('find');
-//     if (typeof e.target === 'object') {
-//         operator = e.target.textContent;
-//     } else if (typeof e === 'string') {
-//         operator = e;
-//     }
-// };
-
-// const handleClickOperatorButton = (e) => {
-//     console.log(operator);
-//     if (e.target.dataset.key === '192') {
-//         handlePercentage();
-//     } else {
-//         if (result && operator) {
-//             result = operate(operator, result, parseInt(a));
-//         } else if (result && !operator) {
-//             findOperator(e);
-//         } else {
-//             result = parseInt(a);
-//         }
-
-//         console.log(result);
-//         previousNumber.textContent = `${result} ${operator}`;
-//         currentNumber.textContent = result;
-//         a = '';
-//     }
-// };
-
-// const operatorButtons = document.querySelectorAll('.operator');
-// operatorButtons.forEach((button) => {
-//     button.addEventListener('click', handleClickOperatorButton);
-// });
-
-// const handleClickEqualButton = () => {
-//     result = operate(operator, result, parseInt(a));
-
-//     previousNumber.textContent = null;
-//     currentNumber.textContent = result;
-//     a = 0;
-// };
-
-// const equalButton = document.querySelector('.equal');
-// equalButton.addEventListener('click', handleClickEqualButton);
-
-// const handleClickClearButton = () => {
-//     a = '';
-//     result = '';
-//     operator = '';
-
-//     previousNumber.textContent = null;
-//     currentNumber.textContent = 0;
-// };
-
-// const clearButton = document.querySelector('.clear');
-// clearButton.addEventListener('click', handleClickClearButton);
-
-// const handleKeyDown = (e) => {
-//     if (e.code.includes('Numpad') || e.code.includes('Digit')) {
-//         if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
-//             handleClickOperatorButton(e.key);
-//         } else if (e.key === 'Enter' || e.key === ' ') {
-//             handleClickEqualButton();
-//         } else {
-//             handleClickNumberButton(e.key);
-//         }
-//     } else if (e.key === 'Backspace' || e.key === 'Escape' || e.key === 'Delete') {
-//         handleClickClearButton();
-//     }
-// };
-
-// window.addEventListener('keydown', handleKeyDown);
-
-// const operate = (operator, a, b) => {
-//     switch (operator) {
-//         case '+':
-//             return add(a, b);
-
-//         case '-':
-//             return subtract(a, b);
-
-//         case '*':
-//             return multiply(a, b);
-
-//         case '/':
-//             return divide(a, b);
-
-//         case '%':
-//             return percentage((a, b));
-//     }
-// };
-
-// const add = (a, b) => {
-//     return a + b;
-// };
-
-// const subtract = (a, b) => {
-//     return a - b;
-// };
-
-// const multiply = (a, b) => {
-//     return a * b;
-// };
-
-// const divide = (a, b) => {
-//     return a / b;
-// };
-
-// const percentage = (a, b) => {
-//     return (b / 100) * a;
-// };
