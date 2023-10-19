@@ -56,8 +56,12 @@ const handleEqualButtonClick = () => {
 };
 
 const handleDotButtonClick = () => {
-    current = `${current}.`;
-    updateDisplay();
+    if (current.includes('.')) {
+        return;
+    } else {
+        current = `${current}.`;
+        updateDisplay();
+    }
 };
 
 const handleDeleteButtonClick = () => {
@@ -87,6 +91,8 @@ const handleKeyboardInput = (e) => {
         handleClearButtonClick();
     } else if (e.key === 'Backspace') {
         handleDeleteButtonClick();
+    } else if (e.key === '.') {
+        handleDotButtonClick();
     }
 };
 
@@ -127,7 +133,14 @@ const operate = (operator, a, b) => {
             return multiply(a, b);
 
         case '/':
-            return divide(a, b);
+            if (b === 0) {
+                alert(
+                    "Dividing by zero? Nice try, but I can't make the impossible happen. Please choose a different number to divide by. 😉"
+                );
+                handleClearButtonClick();
+            } else {
+                return divide(a, b);
+            }
     }
 };
 
